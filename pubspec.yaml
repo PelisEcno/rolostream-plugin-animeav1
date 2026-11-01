@@ -1,0 +1,24 @@
+name: animeav1_plugin
+description: Plugin de AnimeAV1 para RoloStream.
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  dio: ^5.7.0
+  cookie_jar: ^4.0.8
+  dio_cookie_manager: ^3.1.1
+  html: ^0.15.4
+
+  # Contrato común. Local mientras se desarrolla; al subir los repos usar Git:
+  #   rolostream_core:
+  #     git:
+  #       url: https://github.com/PelisEcno/rolostream-core
+  #       ref: main
+  rolostream_core:
+    path: ../rolostream_core
+
+dev_dependencies:
+  test: ^1.25.0
