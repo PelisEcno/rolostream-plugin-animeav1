@@ -12,13 +12,10 @@ dependencies:
   dio_cookie_manager: ^3.1.1
   html: ^0.15.4
 
-  # Contrato común. Local mientras se desarrolla; al subir los repos usar Git:
-  #   rolostream_core:
-  #     git:
-  #       url: https://github.com/PelisEcno/rolostream-core
-  #       ref: main
   rolostream_core:
-    path: ../rolostream_core
+    git:
+      url: https://github.com/PelisEcno/rolostream_core
+      ref: main
 
 dev_dependencies:
   test: ^1.25.0
