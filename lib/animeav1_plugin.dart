@@ -347,13 +347,12 @@ class AnimeAV1Plugin {
       out.add(RecentEpisode(
         titulo: media['title'] as String? ?? '',
         url: '$_baseUrl/media/$slug/$number',
-        imagen: _thumbnailUrl(e['id']),
+        imagen: _coverUrl(media['id']), // <-- CAMBIO AQUÍ
         fecha: _formatRelativeDate(e['publishedAt'] as String?),
       ));
     }
     return out;
   }
-
   // ----------------------------------------------------------
   // 5. SERIES RECIENTES
   // ----------------------------------------------------------
