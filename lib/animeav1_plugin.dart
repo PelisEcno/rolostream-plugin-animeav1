@@ -153,9 +153,11 @@ class AnimeAV1Plugin {
     return s.isEmpty ? '' : '$_cdnUrl/covers/$s.jpg';
   }
 
-  String _thumbnailUrl(dynamic episodeId) {
-    if (episodeId == null) return '';
-    final s = episodeId.toString();
+  /// Miniatura horizontal (300x200) del ANIME. La ruta usa el id del anime, no el
+  /// del episodio: `thumbnails/{episodeId}.jpg` responde 403.
+  String _thumbnailUrl(dynamic mediaId) {
+    if (mediaId == null) return '';
+    final s = mediaId.toString();
     return s.isEmpty ? '' : '$_cdnUrl/thumbnails/$s.jpg';
   }
 
@@ -347,7 +349,7 @@ class AnimeAV1Plugin {
       out.add(RecentEpisode(
         titulo: media['title'] as String? ?? '',
         url: '$_baseUrl/media/$slug/$number',
-        imagen: _coverUrl(media['id']), // <-- CAMBIO AQUÍ
+        imagen: _thumbnailUrl(media['id']),
         fecha: _formatRelativeDate(e['publishedAt'] as String?),
       ));
     }
