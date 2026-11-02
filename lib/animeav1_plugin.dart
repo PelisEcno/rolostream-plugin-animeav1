@@ -314,15 +314,24 @@ class AnimeAV1Plugin {
 
     final embeds = json['embeds'] as Map<String, dynamic>? ?? {};
     final servers = <VideoServer>[];
+    final seen = <String>{};
 
-    final lang = embeds.containsKey('SUB') ? 'SUB' : 'DUB';
-    final list = (embeds[lang] as List?) ?? [];
+    // La página trae un arreglo por idioma, con URLs distintas en cada uno.
+    // Latino (DUB) primero: es el que abre el reproductor por defecto.
+    const labels = {'DUB': 'Latino', 'SUB': 'Subtitulado'};
+    final keys = [
+      ...labels.keys.where(embeds.containsKey),
+      ...embeds.keys.where((k) => !labels.containsKey(k)),
+    ];
 
-    for (final e in list) {
-      final server = (e['server'] as String?)?.toLowerCase() ?? '';
-      final url = e['url'] as String? ?? '';
-      if (url.isEmpty || server.isEmpty) continue;
-      servers.add(VideoServer(nombre: server, url: url));
+    for (final key in keys) {
+      final label = labels[key] ?? key;
+      for (final e in (embeds[key] as List?) ?? const []) {
+        final server = (e['server'] as String?)?.trim() ?? '';
+        final url = e['url'] as String? ?? '';
+        if (url.isEmpty || server.isEmpty || !seen.add(url)) continue;
+        servers.add(VideoServer(nombre: '$server ($label)', url: url));
+      }
     }
 
     return servers;
