@@ -4,10 +4,6 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'js_literal.dart';
 
-// ============================================================
-// MODELOS (idénticos a latanime_plugin)
-// ============================================================
-
 class AnimeResult {
   final String nombre;
   final String url;
@@ -90,10 +86,6 @@ class FilterAnime {
   });
 }
 
-// ============================================================
-// PLUGIN
-// ============================================================
-
 class AnimeAV1Plugin {
   static const String _baseUrl = 'https://animeav1.com';
   static const String _cdnUrl = 'https://cdn.animeav1.com';
@@ -118,14 +110,8 @@ class AnimeAV1Plugin {
     _dio.interceptors.add(CookieManager(_cookieJar));
   }
 
-  // ----------------------------------------------------------
-  // HELPERS
-  // ----------------------------------------------------------
-
-  /// SvelteKit incrusta los datos de la página como un literal JavaScript
-  /// (`data: [null, {type:"data",…}, {type:"data",data:{…}}]`), no como JSON:
-  /// claves sin comillas y, en el catálogo, funciones autoinvocadas.
-  /// Se interpreta con [parseJsValue] y se devuelve el `data` del último nodo.
+/// SvelteKit incrusta los datos como un literal JavaScript, no como JSON: claves sin comillas
+/// y funciones autoinvocadas. Se interpreta con [parseJsValue].
   Map<String, dynamic>? _extractSveltekitData(String html) {
     final match = RegExp(r'data:\s*(?=\[null)').firstMatch(html);
     if (match == null) return null;
@@ -144,7 +130,6 @@ class AnimeAV1Plugin {
     return null;
   }
 
-  /// El catálogo usa el mismo formato que el resto de páginas.
   Map<String, dynamic>? _extractCatalogData(String html) => _extractSveltekitData(html);
 
   String _coverUrl(dynamic id) {
@@ -222,10 +207,6 @@ class AnimeAV1Plugin {
     return animes;
   }
 
-  // ----------------------------------------------------------
-  // 1. BÚSQUEDA
-  // ----------------------------------------------------------
-
   Future<List<AnimeResult>> search(String query) async {
     if (query.trim().isEmpty) return [];
     try {
@@ -255,10 +236,6 @@ class AnimeAV1Plugin {
       return [];
     }
   }
-
-  // ----------------------------------------------------------
-  // 2. DETALLE DEL ANIME
-  // ----------------------------------------------------------
 
   Future<AnimeDetail> getAnime(String slug) async {
     final cleanSlug = _extractSlug(slug);
@@ -299,10 +276,6 @@ class AnimeAV1Plugin {
     );
   }
 
-  // ----------------------------------------------------------
-  // 3. SERVIDORES
-  // ----------------------------------------------------------
-
   Future<List<VideoServer>> getServers(String slug, int numero) async {
     final cleanSlug = _extractSlug(slug);
     final res = await _dio.get<String>(
@@ -337,10 +310,6 @@ class AnimeAV1Plugin {
     return servers;
   }
 
-  // ----------------------------------------------------------
-  // 4. EPISODIOS RECIENTES
-  // ----------------------------------------------------------
-
   Future<List<RecentEpisode>> getLatestEpisodes() async {
     final res = await _dio.get<String>(
       '$_baseUrl/',
@@ -364,9 +333,6 @@ class AnimeAV1Plugin {
     }
     return out;
   }
-  // ----------------------------------------------------------
-  // 5. SERIES RECIENTES
-  // ----------------------------------------------------------
 
   Future<List<RecentSerie>> getRecentSeries() async {
     final res = await _dio.get<String>(
@@ -388,10 +354,6 @@ class AnimeAV1Plugin {
     }
     return out;
   }
-
-  // ----------------------------------------------------------
-  // 6. ANIMES EN EMISIÓN
-  // ----------------------------------------------------------
 
   Future<List<AiringAnime>> getAiringAnimes({int page = 1}) async {
     final uri = Uri.parse('$_baseUrl/catalogo').replace(
@@ -425,10 +387,6 @@ class AnimeAV1Plugin {
     }
     return animes;
   }
-
-  // ----------------------------------------------------------
-  // 7. FILTROS DE CATÁLOGO
-  // ----------------------------------------------------------
 
   Future<List<FilterAnime>> getAnimesByFilter({
     String genero = 'false',

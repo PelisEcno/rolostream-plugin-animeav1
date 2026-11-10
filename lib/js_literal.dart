@@ -1,13 +1,5 @@
-/// Intérprete mínimo de los literales JavaScript que SvelteKit incrusta en el HTML
-/// (`kit.start(app, element, { data: [...] })`). No es JSON:
-///
-///  * claves sin comillas: `{id:1,title:"x"}`
-///  * `void 0`, `!0`, `!1`, `undefined`, `new Date(...)`
-///  * funciones autoinvocadas que comparten objetos entre sí:
-///    `(function(a,b){a.id=1;a.name="TV";return {category:a}}({},{}))`
-///
-/// Solo soporta lo necesario para eso: literales, referencias a variables,
-/// asignaciones `x.prop = valor;` y `return`.
+/// Intérprete mínimo de los literales JavaScript que SvelteKit incrusta en el HTML. No es JSON:
+/// claves sin comillas, `void 0`, `!0`, `new Date(...)` y funciones autoinvocadas.
 Object? parseJsValue(String source, int start) => _JsParser(source, start).parseValue();
 
 class JsParseException implements Exception {
@@ -63,7 +55,6 @@ class _JsParser {
     return _s.substring(st, _i);
   }
 
-  /// true si en la posición actual está la palabra [word] completa.
   bool _keyword(String word) {
     if (!_peekIs(word)) return false;
     final end = _i + word.length;
@@ -269,7 +260,6 @@ class _JsParser {
     }
   }
 
-  /// `( expr )` o la función autoinvocada `(function(a,b){…}(args))`.
   Object? _paren() {
     _expect('(');
     _ws();
@@ -327,7 +317,6 @@ class _JsParser {
     return result;
   }
 
-  /// Evalúa el cuerpo: asignaciones `x.prop = valor;` y un `return`.
   Object? _body() {
     while (true) {
       _ws();
@@ -342,7 +331,6 @@ class _JsParser {
         return v;
       }
       if (_s[_i] == '}') return null;
-      // asignación: ident(.ident)* = valor
       final name = _ident();
       Object? target = _lookup(name);
       String? lastKey;
@@ -364,8 +352,6 @@ class _JsParser {
     }
   }
 
-  /// Avanza hasta justo después de la '}' que cierra el bloque (ya abierto),
-  /// ignorando llaves dentro de cadenas.
   void _skipBlock() {
     var depth = 1;
     while (_i < _s.length) {

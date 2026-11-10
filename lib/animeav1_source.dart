@@ -1,8 +1,6 @@
 import 'package:rolostream_core/rolostream_core.dart' as core;
 import 'animeav1_plugin.dart' as raw;
 
-/// Adaptador de [raw.AnimeAV1Plugin] al contrato común de RoloStream.
-/// Los modelos del plugin y los del core tienen los mismos campos: solo se reenvían.
 class AnimeAV1Source implements core.SourcePlugin {
   AnimeAV1Source([raw.AnimeAV1Plugin? plugin]) : _plugin = plugin ?? raw.AnimeAV1Plugin();
 
@@ -17,7 +15,6 @@ class AnimeAV1Source implements core.SourcePlugin {
   @override
   String? get iconAsset => null;
 
-  /// URL de serie: https://animeav1.com/media/{slug}
   @override
   String slugFromUrl(String url) {
     final segs = Uri.tryParse(url)?.pathSegments.where((s) => s.isNotEmpty).toList() ?? [];
@@ -25,7 +22,6 @@ class AnimeAV1Source implements core.SourcePlugin {
     return segs.isEmpty ? url : segs.last;
   }
 
-  /// URL de episodio: https://animeav1.com/media/{slug}/{numero}
   @override
   ({String slug, int numero})? parseEpisodeUrl(String url) {
     final path = Uri.tryParse(url)?.path ?? '';
@@ -105,7 +101,6 @@ class AnimeAV1Source implements core.SourcePlugin {
   core.FilterOptions get filterOptions => _filterOptions;
 }
 
-// Valores tal como los usa animeav1.com/catalogo (genre, category, letter, minYear/maxYear).
 const _generos = <core.FilterOption>[
   core.FilterOption('accion', 'Acción'),
   core.FilterOption('aventura', 'Aventura'),
